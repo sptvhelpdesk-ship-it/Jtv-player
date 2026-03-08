@@ -51,6 +51,34 @@ video{
   z-index:2000;
 }
 
+/* Telegram Style */
+#tg-link {
+  position: absolute;
+  left: 15px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 6px 12px;
+  border-radius: 50px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 13px;
+  z-index: 3000;
+  border: 1px solid #0088cc;
+  transition: transform 0.2s;
+}
+
+#tg-link:active {
+  transform: scale(0.95);
+}
+
+#tg-link img {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
 .manual-btn{
   position:absolute;
   top:50%;
@@ -71,8 +99,16 @@ video{
 
 <div class="shaka-video-container" data-shaka-player>
   <video autoplay muted playsinline></video>
+  
   <div id="channelTitle"></div>
   <div id="logo">IVAN PLAYER</div>
+
+  <!-- Telegram ID/Link -->
+  <a href="https://t.me/sptvg" target="_blank" id="tg-link">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="TG">
+    @sptvg
+  </a>
+
   <div id="manualBtn" class="manual-btn">▶ Click to Play</div>
 </div>
 
@@ -152,8 +188,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if(!(await tryPlay())){
           manualBtn.style.display="block";
         }
-    } else {
-        console.error("No stream URL provided.");
     }
   }catch(e){
     console.error(e);
