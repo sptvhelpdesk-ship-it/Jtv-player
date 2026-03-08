@@ -45,26 +45,12 @@ video{
   font-size: 13px;
   z-index: 3000;
   border: 1px solid #fff;
-  transition: transform 0.2s;
 }
 
 #tg-link img {
   width: 16px;
   height: 16px;
   margin-right: 6px;
-}
-
-/* Channel Title - Positioned next to Telegram button */
-#channelTitle{
-  position:absolute;
-  left: 115px; /* Adjusting so it doesn't overlap TG button */
-  top:15px;
-  background:rgba(0,0,0,0.6);
-  padding:5px 12px;
-  border-radius:6px;
-  font-size:13px;
-  z-index:2000;
-  color: #fff;
 }
 
 .manual-btn{
@@ -94,24 +80,19 @@ video{
     @sptvg
   </a>
 
-  <div id="channelTitle"></div>
+  <!-- Channel Title div টি ডিলিট করে দিয়েছি -->
 
   <div id="manualBtn" class="manual-btn">▶ Click to Play</div>
 </div>
 
 <script>
-
 const params = new URLSearchParams(window.location.search);
 const streamUrl = params.get('url');
 const keyId = params.get('keyId');
 const key = params.get('key');
 const cookieHeader = params.get('cookie');
-const channelName = params.get('name') || '';
-
-document.getElementById('channelTitle').textContent = channelName;
 
 document.addEventListener('DOMContentLoaded', async () => {
-
   shaka.polyfill.installAll();
   if (!shaka.Player.isBrowserSupported()) return;
 
@@ -120,16 +101,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const container = document.querySelector('.shaka-video-container');
   new shaka.ui.Overlay(player, container, video);
 
-  // ClearKey DRM
   if (keyId && key) {
     player.configure({
-      drm: {
-        clearKeys: { [keyId]: key }
-      }
+      drm: { clearKeys: { [keyId]: key } }
     });
   }
 
-  // Header + Cookie Injection
   player.getNetworkingEngine().registerRequestFilter((type, request) => {
     request.headers['Referer'] = 'https://www.jiotv.com/';
     request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
@@ -148,39 +125,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   const manualBtn = document.getElementById('manualBtn');
 
   async function tryPlay(){
-    try{
-      video.muted = false;
-      await video.play();
-      return true;
-    }catch{
-      try{
-        video.muted = true;
-        await video.play();
-        return true;
-      }catch{
-        return false;
-      }
-    }
+    try{ video.muted = false; await video.play(); return true; }
+    catch{ try{ video.muted = true; await video.play(); return true; } catch{ return false; } }
   }
 
   try{
     if(streamUrl){
         await player.load(streamUrl);
-        if(!(await tryPlay())){
-          manualBtn.style.display="block";
-        }
+        if(!(await tryPlay())){ manualBtn.style.display="block"; }
     }
-  }catch(e){
-    console.error(e);
-    alert("Stream Load Failed");
-  }
+  }catch(e){ console.error(e); }
 
   manualBtn.onclick = async ()=>{
     manualBtn.style.display="none";
     video.muted=false;
     await video.play();
   };
-
 });
 </script>
 
